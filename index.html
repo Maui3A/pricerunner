@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemical PriceRunner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+<script>
+
+    function next(number) {
+        if (number == 1) {
+            document.getElementById("div1").style.display = "none";
+            document.getElementById("div2").style.display = "none";
+            document.getElementById("div3").style.display = "block";
+
+            findPrice(document.getElementById("inputField").value)
+            document.getElementById("p1").innerHTML = 'Results for "' + document.getElementById("inputField2").value + '"'
+        } else if (number == 2) {
+            document.getElementById("div1").style.display = "none";
+            document.getElementById("div2").style.display = "none";
+            document.getElementById("div3").style.display = "block";
+
+            findPrice(document.getElementById("inputField").value)
+            document.getElementById("p1").innerHTML = 'Results for "' + document.getElementById("inputField2").value + '"'
+        } else {
+            document.getElementById("div1").style.display = "none";
+            document.getElementById("div2").style.display = "none";
+            document.getElementById("div3").style.display = "block";
+
+            findPrice(document.getElementById("inputField").value)
+            document.getElementById("p1").innerHTML = 'Results for "' + document.getElementById("inputField2").value + '"'
+        }
+    }
+
+    function findPrice(chemicalFP) {
+        import OpenAI from "openai";
+        const openai = new OpenAI();
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                { role: "system", content: "You are a helpful assistant." },
+                {
+                    role: "user",
+                    content: "Write a haiku about recursion in programming.",
+                },
+            ],
+        });
+
+        console.log(completion.choices[0].message);
+    }
+
+    function displayProducts(data) {
+      const productList = document.getElementById('product-list');
+      data.forEach(supplier => {
+        const supplierDiv = document.createElement('div');
+        supplierDiv.innerHTML = `<h2>${supplier.supplier}</h2>`;
+        supplier.products.forEach(product => {
+          const productDiv = document.createElement('div');
+          productDiv.innerHTML = `<p>${product.name}: $${product.price}</p>`;
+          supplierDiv.appendChild(productDiv);
+        });
+        productList.appendChild(supplierDiv);
+      });
+    }
+
+    loadProducts();
+    }
+
+function fetchPriceFromLink(link, supplier) {
+    var proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(link)}`;
+    var request = new XMLHttpRequest();
+    request.open('GET', proxyUrl, true);
+
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            var data = JSON.parse(request.responseText);
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(data.contents, 'text/html');
+            var priceElements = doc.querySelectorAll('span'); // Select <p> and all heading elements
+            var tPriceElement = 0;
+
+            priceElements.forEach(element => {
+                var innerHTML = element.innerHTML;
+                if (innerHTML.match(/[$£€¥]/) && element.firstElementChild == null) { // Adjust the regex to include other currency symbols if needed
+                    tPriceElement += 1;
+                    if (tPriceElement == 2) {
+                        console.log(innerHTML.replace("(", "").replace(")", "").replace("nbsp;", "").replace("&", ""))
+                        var cloned = document.getElementById("ex1").cloneNode(true);
+                        cloned.style.display = "block";
+                        document.getElementById("exCont").appendChild(cloned);
+                        cloned.firstElementChild.innerHTML = innerHTML.replace("(", "").replace(")", "").replace("nbsp;", "").replace("&", "")
+                        cloned.lastElementChild.innerHTML = supplier
+                    }
+                }
+            });
+        } else {
+            console.error('Error fetching page: ' + request.statusText);
+        }
+    };
+
+    request.onerror = function() {
+        console.error('Connection error');
+    };
+
+    request.send();
+}
+
+    function changeRadioButton(theNumber) {
+        document.getElementById("radio1").className = "radio1";
+        document.getElementById("radio2").className = "radio1";
+
+        document.getElementById("radio" + theNumber).className = "radio2";
+
+        if (theNumber == 1) { prepMethod = "synthesis" }
+        if (theNumber == 2) { prepMethod = "extraction" }
+    }
+
+    function changeRadioButton2(theNumber) {
+        if (document.getElementById("2radio" + theNumber).className == "radio3") {
+            document.getElementById("2radio" + theNumber).className = "radio4"
+        } else {
+            document.getElementById("2radio" + theNumber).className = "radio3"
+        }
+    }
+
+    function changeRadioButton3(theNumber) {
+
+        document.getElementById("3radio1").className = "radio1";
+        document.getElementById("3radio2").className = "radio1";
+        //document.getElementById("3radio3").className = "radio1";
+
+        document.getElementById("3radio" + theNumber).className = "radio2";
+
+        if (theNumber == 1) {
+
+            theOption = 1;
+
+            document.getElementById("radioDiv1").style.pointerEvents = "none";
+            document.getElementById("radioDiv1").style.opacity = "50%";
+
+
+        } else if (theNumber == 2) {
+
+            theOption = 2;
+
+            document.getElementById("radioDiv1").style.pointerEvents = "none";
+            document.getElementById("radioDiv1").style.opacity = "50%";
+    
+
+        } else {
+
+            theOption = 3;
+            
+            document.getElementById("radioDiv1").style.pointerEvents = "auto";
+            document.getElementById("radioDiv1").style.opacity = "100%";
+        }
+    }
+</script>
+<style>
+    .btn {
+        outline: none;
+        border: none;
+        background-color: #15171f;
+        border: solid;
+        border-radius: 5px;
+        border-width: 2px;
+        border-color: #363941;
+        padding: 15px;
+        width: 335px;
+        margin-left: calc(100% / 2 - (335px / 2));
+        color: rgb(216, 212, 202);
+        margin-top: 15px;
+        transition: 0.2s;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        outline: none;
+        border: none;
+        background-color: #363941;
+        border: solid;
+        border-radius: 5px;
+        border-width: 2px;
+        border-color: #363941;
+        padding: 15px;
+        width: 335px;
+        margin-left: calc(100% / 2 - (335px / 2));
+        color: rgb(216, 212, 202);
+        margin-top: 15px;
+        transition: 0.2s;
+        cursor: pointer;
+    }
+
+    .radio1 {
+        outline: none;
+    border: none;
+    background-color: #15171f;
+    border: solid;
+    border-radius: 5px;
+    border-width: 2px;
+    border-color: #363941;
+    padding: 15px;
+    width: 335px;
+    margin-left: calc(100% / 2 - (335px / 2));
+    color: rgb(216, 212, 202);
+    margin-top: 15px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.radio2 {
+    outline: none;
+    border: none;
+    background-color: #363941;
+    border: solid;
+    border-radius: 5px;
+    border-width: 2px;
+    border-color: #363941;
+    padding: 15px;
+    width: 335px;
+    margin-left: calc(100% / 2 - (335px / 2));
+    color: rgb(216, 212, 202);
+    margin-top: 15px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.radio3 {
+    outline: none;
+    border: none;
+    background-color: #15171f;
+    border: solid;
+    border-radius: 5px;
+    border-width: 2px;
+    border-color: #363941;
+    padding: 15px;
+    width: 335px;
+    margin-left: calc(100% / 2 - (335px / 2));
+    color: rgb(216, 212, 202);
+    margin-top: 15px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.radio4 {
+    outline: none;
+    border: none;
+    background-color: #363941;
+    border: solid;
+    border-radius: 5px;
+    border-width: 2px;
+    border-color: #363941;
+    padding: 15px;
+    width: 335px;
+    margin-left: calc(100% / 2 - (335px / 2));
+    color: rgb(216, 212, 202);
+    margin-top: 15px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+</style>
+<body>
+    <div style="position: fixed; overflow-y: auto; width: 100%; height: 100%; background-color: #0F1116; left: 0px; top: 0px;" id="div1">
+        <div style="margin-top: calc(100vh / 2 - 198px)">
+            <p style="font-family: 'Barlow'; font-weight: bold; font-size: 36px; text-align: center; margin-top: 100px; color: rgb(216, 212, 202); line-height: 50px;">What Chemical To Find<br>Best Price for?</p>
+            <input  onkeydown="if (event.which == 13) { next(1) }" style="outline: none; border: none; background-color: #15171f; border: solid; border-radius: 5px; border-width: 2px; border-color: #363941; padding: 15px; width: 300px; margin-left: calc(100% / 2 - (335px / 2)); color: rgb(216, 212, 202); margin-top: 15px" id="inputField">
+            <button class="btn" onclick="next(1)">Continue</button>
+        </div>
+    </div>
+    <div id="div2" style="display: none; position: fixed; overflow-y: auto; width: 100%; height: 100%; background-color: #0F1116; left: 0px; top: 0px;">
+        <div style="margin-top: calc(100vh / 2 - 198px)">
+            <p style="font-family: 'Barlow'; font-weight: bold; font-size: 36px; text-align: center; margin-top: 100px; color: rgb(216, 212, 202); line-height: 50px;">What Suppliers?</p>
+            <div style="margin-top: 25px; display: grid; justify-content: center; align-items: center; grid-template-columns: repeat(2, 1fr); width: 400px; margin-left: calc(100vw / 2 - 120px); column-gap: 25px; row-gap: 25px;">
+                <div id="3radio1" class="radio1" style="height: 60px; width: 130px; font-size: 13px;" onclick="changeRadioButton3(1)">
+                    <p style="font-family: 'Poppins'; font-weight: 600; text-align: center; margin-top: 9px;">SHIPS TO PRIVATE INDIVIDUALS</p>
+                </div>
+                <div id="3radio2" class="radio2" style="height: 60px; width: 130px; font-size: 13px;" onclick="changeRadioButton3(2)">
+                    <p style="font-family: 'Poppins'; font-weight: 600; text-align: center; margin-top: 18px;">ALL SUPPLIERS</p>
+                </div>
+                <!--<div id="3radio3" class="radio1" style="height: 60px; width: 130px; font-size: 13px;" onclick="changeRadioButton3(3)">
+                    <p style="font-family: 'Poppins'; font-weight: 600; text-align: center; margin-top: 9px;">CHOOSE<br>YOURSELF</p>
+                </div>-->
+            </div>
+        </div>
+        <button class="btn" style="margin-top: 50px;" onclick="next(2)">Continue</button>
+    </div>
+    <div id="div3" style="display: none; position: fixed; overflow-y: auto; width: 100%; height: 100%; background-color: #0F1116; left: 0px; top: 0px;">
+        <div style="margin-top: calc(100vh / 2 - 198px)">
+            <p style="font-family: 'Barlow'; font-weight: bold; font-size: 36px; text-align: center; margin-top: 100px; color: rgb(216, 212, 202); line-height: 50px;">Suppliers</p>
+            <div id="exCont" style="margin-top: 25px; display: grid; justify-content: center; align-items: center; grid-template-columns: repeat(2, 1fr); width: 400px; margin-left: calc(100vw / 2 - 150px); column-gap: 25px; row-gap: 25px;">
+                <div id="ex1" style="width: 300px; height: 250px; background-color: #1b1e27; border-radius: 15px;">
+                    <p style="font-family: 'Poppins'; font-weight: 600; font-size: 30px; text-align: center; color: white; margin-top: 50px;"></p>
+                    <p style="font-family: 'Poppins'; font-weight: 400; font-size: 22px; text-align: center; color: white;"></p>
+                </div>
+            </div>
+        </div>
+        <button class="btn" style="margin-top: 50px;" onclick="next(3)">Continue</button>
+    </div>
+</body>
+</html>
